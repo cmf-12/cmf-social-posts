@@ -5,5 +5,7 @@
   "price": "$99.99/yd",
   "word": "LINEN",
   "handle": "louisville-blue-mustard-embroidery-blended-linen-fabric",
-  "type": "fabric"
+  "type": "fabric",
+  "layout": "full_brand",
+  "tag": "P"
 }

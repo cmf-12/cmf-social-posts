@@ -256,11 +256,27 @@ def pink_waves(p):
     return css, body
 
 
+def full_brand(p):
+    """16 (on request). Photo fills the whole post; big CLASSIC MODERN FABRICS on a ribbon, phrase in a pill."""
+    css = """
+      .ph{left:0;top:0;width:1080px;height:1350px;z-index:1}
+      .rib{left:-20px;right:-20px;top:70px;z-index:5;background:var(--frame);padding:22px 0 18px;text-align:center;transform:rotate(-2deg);box-shadow:0 10px 0 var(--a)}
+      .rib b{font-family:Bungee,sans-serif;font-weight:400;font-size:74px;letter-spacing:3px;color:var(--ink)}
+      .pill{left:0;right:0;bottom:205px;z-index:6;text-align:center}
+      .pill span{display:inline-block;background:var(--a);color:var(--frame);font-family:Shrikhand,serif;font-size:var(--hs);padding:12px 44px;border-radius:70px;transform:rotate(-2deg)}
+      .cap{bottom:34px;z-index:6}
+      .cap span{display:inline-block;background:var(--frame);padding:10px 30px;border-radius:40px;line-height:1.35}"""
+    body = f"""<div class="clip ph">{p['img']}</div><div class="abs rib"><b>Classic Modern Fabrics</b></div>
+      <div class="abs pill" style="--hs:{min(p['hs'],64)}px"><span>{p['head']}</span></div><div class="cap"><span>{p['cap']}</span></div>"""
+    return css, body
+
+
 LAYOUTS = {
     "bold_repeat": bold_repeat, "vertical_strip": vertical_strip, "psy_waves": psy_waves,
     "outline_offset": outline_offset, "circle_curved": circle_curved, "abstract_frame": abstract_frame,
     "script_repeat": script_repeat, "squiggle_bg": squiggle_bg, "polaroid_new": polaroid_new,
     "review_card": review_card, "circle_bubble": circle_bubble, "xoxo_tilt": xoxo_tilt,
     "leopard_blob": leopard_blob, "plus_dots": plus_dots, "pink_waves": pink_waves,
+    "full_brand": full_brand,
 }
-ORDER = list(LAYOUTS)
+ORDER = [k for k in LAYOUTS if k != "full_brand"]  # full_brand is used only when a post asks for it
