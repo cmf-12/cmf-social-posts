@@ -271,12 +271,25 @@ def full_brand(p):
     return css, body
 
 
+def full_text(p):
+    """17 (on request). Photo fills the whole post; big title on a dark band at the top, caption pill at the bottom."""
+    css = """
+      .ph{left:0;top:0;width:1080px;height:1350px;z-index:1}
+      .band{left:0;right:0;top:0;height:250px;z-index:4;background:linear-gradient(var(--ink) 70%, transparent)}
+      .head{left:50px;right:50px;top:60px;font-size:var(--hs);color:var(--frame);z-index:6}
+      .cap{bottom:34px;z-index:6}
+      .cap span{display:inline-block;background:var(--frame);padding:10px 30px;border-radius:40px;line-height:1.35}"""
+    body = f"""<div class="clip ph">{p['img']}</div><div class="abs band"></div>
+      <div class="head" style="--hs:{p['hs']}px">{p['head']}</div><div class="cap"><span>{p['cap']}</span></div>"""
+    return css, body
+
+
 LAYOUTS = {
     "bold_repeat": bold_repeat, "vertical_strip": vertical_strip, "psy_waves": psy_waves,
     "outline_offset": outline_offset, "circle_curved": circle_curved, "abstract_frame": abstract_frame,
     "script_repeat": script_repeat, "squiggle_bg": squiggle_bg, "polaroid_new": polaroid_new,
     "review_card": review_card, "circle_bubble": circle_bubble, "xoxo_tilt": xoxo_tilt,
     "leopard_blob": leopard_blob, "plus_dots": plus_dots, "pink_waves": pink_waves,
-    "full_brand": full_brand,
+    "full_brand": full_brand, "full_text": full_text,
 }
-ORDER = [k for k in LAYOUTS if k != "full_brand"]  # full_brand is used only when a post asks for it
+ORDER = [k for k in LAYOUTS if k not in ("full_brand", "full_text")]  # full_brand is used only when a post asks for it
