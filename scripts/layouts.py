@@ -1,4 +1,4 @@
-"""The 10 rotating post layouts, picked from JD's sample boards.
+"""The 15 rotating post layouts, picked from JD's sample boards.
 
 Each function gets a dict `p` with: img (the <img> tag), head, cap, word, hs (headline px size)
 and returns (css, body_html). Colors come from CSS vars set by the palette.
@@ -169,10 +169,92 @@ def review_card(p):
     return css, body
 
 
+def circle_bubble(p):
+    """11. Big circle 'bubble' with the headline overlapping the photo corner + dashed lines (sample: '1K GIVEAWAY')."""
+    dashes = "".join(f'<line x1="{x}" y1="30" x2="{x}" y2="300" stroke="var(--ink)" stroke-width="12" stroke-dasharray="40 26" stroke-linecap="round"/>'
+                     for x in (40, 90, 140))
+    css = """
+      .ph{left:190px;top:250px;width:840px;height:920px;z-index:3;border-radius:16px}
+      .bub{left:40px;top:60px;width:430px;height:430px;border-radius:50%;background:var(--soft);z-index:5;
+        display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;box-shadow:10px 12px 0 var(--a)}
+      .bub span{font-family:Shrikhand,serif;font-size:var(--hs);line-height:1.02;color:var(--ink)}
+      .swoosh{left:640px;top:40px;width:520px;height:330px;background:var(--b);border-radius:60% 40% 50% 50%;z-index:1}
+      .cap{left:220px;right:40px;text-align:left;bottom:44px}"""
+    body = f"""<svg class="full" style="z-index:2" viewBox="0 0 1080 1350">{dashes}</svg><div class="abs swoosh"></div>
+      <div class="clip ph">{p['img']}</div>
+      <div class="abs bub" style="--hs:{min(p['hs'],64)}px"><span>{p['head']}</span></div><div class="cap">{p['cap']}</div>"""
+    return css, body
+
+
+def xoxo_tilt(p):
+    """12. Photo slightly tilted with a solid color block + big hand-drawn XOXO (sample: 'STARBOY xoxo')."""
+    css = """
+      .blk{left:140px;top:120px;width:860px;height:1000px;background:var(--a);transform:rotate(3deg);z-index:2}
+      .ph{left:100px;top:150px;width:860px;height:1000px;z-index:3;transform:rotate(-2deg);border:12px solid var(--frame)}
+      .xo{left:520px;top:1060px;z-index:6;font-family:Bungee,sans-serif;font-size:130px;color:var(--frame);
+        -webkit-text-stroke:5px var(--ink);transform:rotate(-8deg);letter-spacing:-6px}
+      .head{left:60px;right:60px;top:40px;font-size:var(--hs)}
+      .cap{left:50px;right:520px;text-align:left;bottom:40px;font-size:26px}"""
+    body = f"""<div class="head" style="--hs:{min(p['hs'],80)}px">{p['head']}</div>
+      <div class="abs blk"></div><div class="clip ph">{p['img']}</div><div class="abs xo">XOXO</div>
+      <div class="cap">{p['cap']}</div>"""
+    return css, body
+
+
+def leopard_blob(p):
+    """13. Leopard-spot blob peeking behind a rounded photo + mint XO doodles (sample: 'Thank you 1K followers')."""
+    import random
+    rnd = random.Random(3)
+    spots = "".join(
+        f'<ellipse cx="{rnd.randint(20,560)}" cy="{rnd.randint(20,560)}" rx="{rnd.randint(12,22)}" ry="{rnd.randint(9,16)}" fill="var(--ink)" transform="rotate({rnd.randint(0,180)})" transform-origin="center"/>'
+        for _ in range(70))
+    css = """
+      .leo{left:-60px;top:110px;width:600px;height:600px;z-index:1}
+      .ph{left:150px;top:230px;width:860px;height:930px;z-index:3;border-radius:48px;border:12px solid var(--frame)}
+      .head{left:60px;right:60px;top:44px;font-size:var(--hs)}
+      .xo{left:40px;top:1110px;z-index:6;font-family:Shrikhand,serif;font-size:120px;color:var(--c);transform:rotate(-10deg)}"""
+    body = f"""<svg class="abs leo" viewBox="0 0 600 600"><clipPath id="lb"><path d="M300 20 C470 10 590 150 570 320 C550 490 400 590 250 570 C90 550 0 420 20 260 C40 110 150 30 300 20Z"/></clipPath>
+      <g clip-path="url(#lb)"><rect width="600" height="600" fill="var(--b)"/>{spots}</g></svg>
+      <div class="head" style="--hs:{p['hs']}px">{p['head']}</div>
+      <div class="clip ph">{p['img']}</div><div class="abs xo">xo</div><div class="cap" style="left:260px">{p['cap']}</div>"""
+    return css, body
+
+
+def plus_dots(p):
+    """14. Big plus marks + halftone dot grid + headline on a brush blob (sample: 'BE BOLD')."""
+    dots = "".join(f'<circle cx="{x}" cy="{y}" r="7" fill="var(--frame)"/>' for x in range(620, 1080, 40) for y in range(40, 260, 40))
+    css = """
+      .ph{left:70px;top:270px;width:940px;height:930px;z-index:3;border-radius:22px;border:12px solid var(--frame)}
+      .brush{left:60px;top:70px;width:760px;height:170px;background:var(--c);border-radius:50% 40% 55% 45%/60% 50% 50% 40%;z-index:4;transform:rotate(-2deg)}
+      .head{left:60px;width:760px;top:100px;font-size:var(--hs);z-index:6;color:var(--ink)}"""
+    plus = """<path d="M820 -40 h90 v160 h160 v90 h-160 v160 h-90 v-160 h-160 v-90 h160z" fill="var(--a)" opacity=".85"/>
+      <path d="M-30 1150 h70 v120 h120 v70 h-120 v120 h-70 v-120 h-120 v-70 h120z" fill="var(--a)" opacity=".85"/>"""
+    body = f"""<svg class="full" viewBox="0 0 1080 1350">{dots}{plus}</svg>
+      <div class="abs brush"></div><div class="head" style="--hs:{min(p['hs'],74)}px">{p['head']}</div>
+      <div class="clip ph">{p['img']}</div><div class="cap">{p['cap']}</div>"""
+    return css, body
+
+
+def pink_waves(p):
+    """15. Soft wavy bands background + photo with a thin gold frame (sample: pink waves portrait)."""
+    bands = "".join(
+        f'<path d="M-60 {y} C120 {y-90} 300 {y+90} 540 {y} S900 {y-90} 1140 {y}" stroke="var(--soft)" stroke-width="48" fill="none"/>'
+        for y in range(60, 1400, 170))
+    css = """
+      .gold{left:100px;top:200px;width:880px;height:990px;border:6px solid var(--b);z-index:3;padding:18px;background:var(--frame)}
+      .gold .clip{position:relative;width:100%;height:100%}
+      .head{left:60px;right:60px;top:46px;font-size:var(--hs)}"""
+    body = f"""<svg class="full" viewBox="0 0 1080 1350">{bands}</svg>
+      <div class="head" style="--hs:{p['hs']}px">{p['head']}</div>
+      <div class="abs gold"><div class="clip">{p['img']}</div></div><div class="cap">{p['cap']}</div>"""
+    return css, body
+
+
 LAYOUTS = {
     "bold_repeat": bold_repeat, "vertical_strip": vertical_strip, "psy_waves": psy_waves,
     "outline_offset": outline_offset, "circle_curved": circle_curved, "abstract_frame": abstract_frame,
     "script_repeat": script_repeat, "squiggle_bg": squiggle_bg, "polaroid_new": polaroid_new,
-    "review_card": review_card,
+    "review_card": review_card, "circle_bubble": circle_bubble, "xoxo_tilt": xoxo_tilt,
+    "leopard_blob": leopard_blob, "plus_dots": plus_dots, "pink_waves": pink_waves,
 }
 ORDER = list(LAYOUTS)
