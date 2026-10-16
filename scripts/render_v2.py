@@ -99,7 +99,7 @@ def build_html(post, date_str=""):
     layout, palette = pick(date_str, post)
     bg, a, b, c, ink, frame, soft = PALETTES[palette]
     head = post["headline"]
-    hs = 92 if len(head) <= 18 else 76 if len(head) <= 26 else 62
+    hs = 92 if len(head) <= 16 else 72 if len(head) <= 22 else 58 if len(head) <= 30 else 50
     p = {
         "img": f'<img class="photo" src="{html.escape(post["photo"])}" alt="{html.escape(post.get("alt", head))}">',
         "head": html.escape(head), "cap": caption_html(post, date_str),
