@@ -3,52 +3,102 @@
 <head>
 <meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Poppins:wght@500;700&family=DM+Serif+Display:ital@0;1&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Poppins:wght@500;700&family=DM+Serif+Display:ital@0;1&family=Pacifico&family=Bungee&display=block" rel="stylesheet">
 <style>
-  :root{
-    --bg: {{bg}}; --a: {{a}}; --b: {{b}}; --c: {{c}}; --ink: {{ink}}; --frame: {{frame}};
-  }
+  :root{ --bg: {{bg}}; --a: {{a}}; --b: {{b}}; --c: {{c}}; --ink: {{ink}}; --frame: {{frame}}; }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{width:1080px;height:1350px;overflow:hidden}
   body{background:var(--bg);font-family:'Poppins',Arial,sans-serif;position:relative}
-  .decor{position:absolute;inset:0;width:1080px;height:1350px}
+  .decor{position:absolute;inset:0;width:1080px;height:1350px;z-index:1}
   .headline{position:absolute;left:60px;right:60px;top:48px;text-align:center;
-    font-family:{{headline_font}};font-size:{{headline_size}}px;line-height:1.02;color:var(--ink);
-    letter-spacing:.5px;z-index:5}
+    font-family:{{headline_font}};font-size:{{headline_size}}px;line-height:1.02;color:var(--ink);z-index:5}
   .caption{position:absolute;left:60px;right:60px;bottom:44px;text-align:center;
     font-size:30px;font-weight:500;color:var(--ink);z-index:5;letter-spacing:.3px}
-  .caption b{font-weight:700}
-  .stage{position:absolute;left:50%;top:{{stage_top}}px;transform:translateX(-50%);z-index:3}
+  .stage{position:absolute;z-index:3}
   .photo{width:100%;height:100%;object-fit:{{fit}};display:block;background:#fff}
-
-  /* circle */
-  .circle .ring{width:930px;height:930px;border-radius:50%;background:var(--a);padding:26px;position:relative}
-  .circle .ring::after{content:"";position:absolute;inset:-22px;border-radius:50%;border:8px dashed var(--b)}
-  .circle .clip{width:100%;height:100%;border-radius:50%;overflow:hidden;border:10px solid var(--frame)}
-
-  /* arch */
-  .arch .shadow{position:absolute;left:28px;top:28px;width:860px;height:960px;border-radius:430px 430px 36px 36px;background:var(--a)}
-  .arch .clip{position:relative;width:860px;height:960px;border-radius:430px 430px 36px 36px;overflow:hidden;border:12px solid var(--frame)}
-
-  /* tilt */
-  .tilt .back{position:absolute;inset:0;transform:rotate(5deg);background:var(--a);border-radius:28px}
-  .tilt .card{position:relative;width:880px;height:960px;transform:rotate(-3deg);background:var(--frame);padding:22px;border-radius:24px;box-shadow:0 18px 40px rgba(0,0,0,.18)}
-  .tilt .clip{width:100%;height:100%;overflow:hidden;border-radius:12px}
-
-  /* offset */
-  .offset .block{position:absolute;left:-30px;top:34px;width:880px;height:950px;background:var(--a);border-radius:60px}
-  .offset .clip{position:relative;width:880px;height:950px;border-radius:60px;overflow:hidden;border:12px solid var(--frame)}
-
   .sticker{position:absolute;z-index:6;width:190px;height:190px;border-radius:50%;background:var(--b);color:var(--ink);
     display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:28px;line-height:1.05;
-    transform:rotate(-12deg);box-shadow:0 6px 0 rgba(0,0,0,.12);padding:18px}
+    transform:rotate(-12deg);box-shadow:0 6px 0 rgba(0,0,0,.12);padding:18px;right:46px;top:230px}
+
+  /* 1 circle */
+  .L-circle .stage{left:75px;top:205px;width:930px;height:930px}
+  .L-circle .ring{width:100%;height:100%;border-radius:50%;background:var(--a);padding:26px;position:relative}
+  .L-circle .ring::after{content:"";position:absolute;inset:-22px;border-radius:50%;border:8px dashed var(--b)}
+  .L-circle .clip{width:100%;height:100%;border-radius:50%;overflow:hidden;border:10px solid var(--frame)}
+
+  /* 2 arch */
+  .L-arch .stage{left:90px;top:190px;width:900px;height:1000px}
+  .L-arch .shadow{position:absolute;left:28px;top:28px;width:860px;height:960px;border-radius:430px 430px 36px 36px;background:var(--a)}
+  .L-arch .clip{position:relative;width:860px;height:960px;border-radius:430px 430px 36px 36px;overflow:hidden;border:12px solid var(--frame)}
+
+  /* 3 tilt */
+  .L-tilt .stage{left:100px;top:215px;width:880px;height:960px}
+  .L-tilt .back{position:absolute;inset:0;transform:rotate(5deg);background:var(--a);border-radius:28px}
+  .L-tilt .card{position:relative;width:100%;height:100%;transform:rotate(-3deg);background:var(--frame);padding:22px;border-radius:24px;box-shadow:0 18px 40px rgba(0,0,0,.18)}
+  .L-tilt .clip{width:100%;height:100%;overflow:hidden;border-radius:12px}
+
+  /* 4 offset */
+  .L-offset .stage{left:110px;top:200px;width:880px;height:990px}
+  .L-offset .block{position:absolute;left:-36px;top:36px;width:880px;height:950px;background:var(--a);border-radius:60px}
+  .L-offset .clip{position:relative;width:880px;height:950px;border-radius:60px;overflow:hidden;border:12px solid var(--frame)}
+
+  /* 5 split: photo fills left, text in a colored band on the right */
+  .L-split .stage{left:0;top:0;width:790px;height:1350px}
+  .L-split .clip{width:100%;height:100%;overflow:hidden;border-right:14px solid var(--b)}
+  .L-split .band{position:absolute;left:790px;top:0;width:290px;height:1350px;background:var(--a);z-index:2}
+  .L-split .headline{left:auto;right:-470px;top:575px;width:1230px;transform:rotate(90deg);font-size:{{headline_size_split}}px;color:var(--frame)}
+  .L-split .caption{left:820px;right:24px;bottom:40px;text-align:left;font-size:22px;color:var(--frame);line-height:1.35}
+  .L-split .sticker{right:auto;left:560px;top:60px}
+
+  /* 6 stamp: postage-stamp scalloped edge */
+  .L-stamp .stage{left:90px;top:200px;width:900px;height:990px;transform:rotate(-2deg)}
+  .L-stamp .perf{position:absolute;inset:0;background:var(--frame);
+    -webkit-mask:radial-gradient(circle at 18px 18px,transparent 13px,#000 14px) -18px -18px/36px 36px}
+  .L-stamp .perfshadow{position:absolute;inset:0;transform:translate(14px,16px);background:var(--a);
+    -webkit-mask:radial-gradient(circle at 18px 18px,transparent 13px,#000 14px) -18px -18px/36px 36px}
+  .L-stamp .clip{position:absolute;inset:38px;overflow:hidden;outline:3px solid var(--ink);outline-offset:8px}
+
+  /* 7 blob: organic rounded shape */
+  .L-blob .stage{left:70px;top:190px;width:940px;height:1010px}
+  .L-blob .under{position:absolute;inset:0;transform:translate(26px,22px) rotate(4deg);background:var(--a);
+    border-radius:58% 42% 47% 53% / 45% 55% 45% 55%}
+  .L-blob .clip{position:relative;width:100%;height:100%;overflow:hidden;border:12px solid var(--frame);
+    border-radius:58% 42% 47% 53% / 45% 55% 45% 55%}
+
+  /* 8 polaroid stack */
+  .L-polaroid .stage{left:105px;top:180px;width:870px;height:1050px}
+  .L-polaroid .p1,.L-polaroid .p2{position:absolute;inset:0;border-radius:10px}
+  .L-polaroid .p1{background:var(--a);transform:rotate(-7deg)}
+  .L-polaroid .p2{background:var(--b);transform:rotate(5deg)}
+  .L-polaroid .card{position:relative;width:100%;height:100%;background:#fffdf8;padding:34px 34px 190px;border-radius:8px;box-shadow:0 14px 34px rgba(0,0,0,.2);transform:rotate(-1.5deg)}
+  .L-polaroid .clip{width:100%;height:100%;overflow:hidden}
+  .L-polaroid .caption{bottom:140px;left:150px;right:150px;transform:rotate(-1.5deg);color:#3B2A20;font-size:28px}
+  .L-polaroid .scribble{position:absolute;left:150px;right:150px;bottom:255px;text-align:center;font-family:'Pacifico',cursive;font-size:44px;color:var(--a);z-index:5;transform:rotate(-1.5deg)}
+
+  /* 9 wave band: edge-to-edge photo with wavy top and bottom */
+  .L-wave .stage{left:0;top:200px;width:1080px;height:960px}
+  .L-wave .clip{width:100%;height:100%;overflow:hidden;
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1080 960' preserveAspectRatio='none'%3E%3Cpath d='M0 40 C180 0 360 80 540 40 S900 0 1080 40 V920 C900 960 720 880 540 920 S180 960 0 920Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+  .L-wave .edge{position:absolute;left:0;width:1080px;height:60px;z-index:4}
+  .L-wave .edge.top{top:-26px}.L-wave .edge.bot{bottom:-26px}
+
+  /* 10 retro tv */
+  .L-tv .stage{left:70px;top:190px;width:940px;height:1010px}
+  .L-tv .body{width:100%;height:100%;background:var(--a);border-radius:70px;padding:40px 40px 120px;position:relative;box-shadow:inset 0 -12px 0 rgba(0,0,0,.15)}
+  .L-tv .clip{width:100%;height:100%;overflow:hidden;border-radius:110px/90px;border:12px solid var(--frame)}
+  .L-tv .knob{position:absolute;bottom:34px;width:56px;height:56px;border-radius:50%;background:var(--b);border:6px solid var(--frame)}
+  .L-tv .k1{right:80px}.L-tv .k2{right:160px}
+  .L-tv .grill{position:absolute;left:70px;bottom:46px;width:300px;height:34px;background:repeating-linear-gradient(90deg,var(--frame) 0 10px,transparent 10px 22px);opacity:.8}
 </style>
 </head>
-<body>
+<body class="L-{{layout}}">
 <svg class="decor" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <pattern id="zebra" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
       <rect width="40" height="40" fill="var(--bg)"/><path d="M0 8 C10 2 18 14 40 6 L40 18 C22 26 12 12 0 20Z" fill="var(--ink)"/>
+    </pattern>
+    <pattern id="leopard" width="70" height="70" patternUnits="userSpaceOnUse">
+      <rect width="70" height="70" fill="var(--b)"/><path d="M14 10c8-4 16 2 12 10s-16 6-16-2 4-8 4-8zM48 40c8-4 16 2 12 10s-16 6-16-2 4-8 4-8z" fill="none" stroke="var(--ink)" stroke-width="5"/>
     </pattern>
     <pattern id="dots" width="44" height="44" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="6" fill="var(--c)"/></pattern>
   </defs>
@@ -56,13 +106,9 @@
 </svg>
 
 <div class="headline">{{headline}}</div>
-
-<div class="stage {{layout}}" style="width:{{stage_w}}px;height:{{stage_h}}px">
-  {{frame_html}}
-</div>
-
+<div class="stage">{{frame_html}}</div>
+{{extra_html}}
 {{sticker_html}}
-
 <div class="caption">{{caption}}</div>
 </body>
 </html>

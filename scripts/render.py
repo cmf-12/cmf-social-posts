@@ -5,14 +5,15 @@ Each post file (posts/YYYY-MM-DD.json) looks like:
   "photo": "https://cdn.shopify.com/...jpg",   # real product photo (URL or local path)
   "headline": "Pom pom party",
   "caption": "Melio pompom fringe · 4 yds $48.99 · classicmodernfabrics.com",
-  "layout": "circle" | "arch" | "tilt" | "offset",
-  "palette": "mint" | "blush" | "mustard" | "peach" | "cream" | "terracotta",
-  "decor": "waves" | "blobs" | "stars" | "hearts" | "zebra" | "dots",
+  "layout": optional; default rotates through 10 layouts by date (see LAYOUT_ORDER),
+  "palette": optional; default rotates by date (6 themes),
+  "decor": optional; default rotates by date (7 sets),
   "sticker": "optional short text",
   "fit": "cover" | "contain"                     # contain = whole product, no crop
 }
 Usage: python scripts/render.py [posts/2027-02-01.json ...]   (no args = render all that changed)
 """
+import datetime
 import html
 import json
 import pathlib
@@ -65,51 +66,76 @@ DECOR = {
     "zebra": """
       <rect x="-120" y="300" width="260" height="260" rx="130" fill="url(#zebra)" opacity=".85"/>
       <rect x="840" y="1060" width="320" height="320" rx="160" fill="url(#zebra)" opacity=".85"/>""",
+    "leopard": """
+      <circle cx="80" cy="1180" r="150" fill="url(#leopard)"/>
+      <circle cx="1010" cy="250" r="110" fill="url(#leopard)"/>""",
     "dots": """
       <rect x="0" y="0" width="1080" height="260" fill="url(#dots)" opacity=".55"/>
       <rect x="0" y="1110" width="1080" height="240" fill="url(#dots)" opacity=".55"/>""",
 }
 
-# stage width, height, top
-LAYOUTS = {
-    "circle": (930, 930, 205),
-    "arch":   (900, 1000, 190),
-    "tilt":   (880, 960, 215),
-    "offset": (880, 990, 200),
-}
+# The 10 layouts rotate one per day, in this order. Palettes and decor rotate on
+# their own cycles (6 and 7 days), so the same combination only repeats every 210 days.
+LAYOUT_ORDER = ["circle", "split", "arch", "polaroid", "tilt", "wave", "stamp", "blob", "tv", "offset"]
+PALETTE_ORDER = ["blush", "mint", "mustard", "peach", "cream", "terracotta"]
+DECOR_ORDER = ["hearts", "waves", "stars", "blobs", "zebra", "dots", "leopard"]
+EPOCH = datetime.date(2027, 2, 1)  # Feb 1 2027 = layout #1
+
+
+def defaults_for(date_str):
+    try:
+        n = (datetime.date.fromisoformat(date_str) - EPOCH).days
+    except ValueError:
+        n = 0
+    return (LAYOUT_ORDER[n % len(LAYOUT_ORDER)], PALETTE_ORDER[n % len(PALETTE_ORDER)],
+            DECOR_ORDER[n % len(DECOR_ORDER)])
 
 
 def frame_html(layout, photo, alt):
     img = f'<img class="photo" src="{html.escape(photo)}" alt="{html.escape(alt)}">'
-    if layout == "circle":
-        return f'<div class="ring"><div class="clip">{img}</div></div>'
-    if layout == "arch":
-        return f'<div class="shadow"></div><div class="clip">{img}</div>'
-    if layout == "tilt":
-        return f'<div class="back"></div><div class="card"><div class="clip">{img}</div></div>'
-    return f'<div class="block"></div><div class="clip">{img}</div>'
+    clip = f'<div class="clip">{img}</div>'
+    return {
+        "circle":   f'<div class="ring">{clip}</div>',
+        "arch":     f'<div class="shadow"></div>{clip}',
+        "tilt":     f'<div class="back"></div><div class="card">{clip}</div>',
+        "offset":   f'<div class="block"></div>{clip}',
+        "split":    clip,
+        "stamp":    f'<div class="perfshadow"></div><div class="perf"></div>{clip}',
+        "blob":     f'<div class="under"></div>{clip}',
+        "polaroid": f'<div class="p1"></div><div class="p2"></div><div class="card">{clip}</div>',
+        "wave":     clip,
+        "tv":       f'<div class="body">{clip}<div class="grill"></div><div class="knob k1"></div><div class="knob k2"></div></div>',
+    }[layout]
 
 
-def build_html(post):
-    layout = post.get("layout", "circle")
-    bg, a, b, c, ink, frame = PALETTES[post.get("palette", "mint")]
-    w, h, top = LAYOUTS[layout]
+def extra_html(layout, post):
+    if layout == "split":
+        return '<div class="band"></div>'
+    if layout == "polaroid" and post.get("scribble"):
+        return f'<div class="scribble">{html.escape(post["scribble"])}</div>'
+    return ""
+
+
+def build_html(post, date_str=""):
+    d_layout, d_palette, d_decor = defaults_for(date_str)
+    layout = post.get("layout") or d_layout
+    bg, a, b, c, ink, frame = PALETTES[post.get("palette") or d_palette]
     headline = post["headline"]
     size = 92 if len(headline) <= 18 else 76 if len(headline) <= 26 else 62
     sticker = post.get("sticker")
-    sticker_html = (f'<div class="sticker" style="right:46px;top:{top + 40}px">{html.escape(sticker)}</div>'
-                    if sticker else "")
     vals = {
         "bg": bg, "a": a, "b": b, "c": c, "ink": ink, "frame": frame,
         "headline": html.escape(headline),
         "headline_font": post.get("headline_font", "'Shrikhand', 'DM Serif Display', Georgia, serif"),
         "headline_size": str(post.get("headline_size", size)),
+        "headline_size_split": str(min(118, int(1150 / max(len(headline), 8) * 1.7))),
         "caption": html.escape(post["caption"]),
-        "layout": layout, "stage_w": str(w), "stage_h": str(h), "stage_top": str(top),
+        "layout": layout,
         "fit": post.get("fit", "cover"),
-        "decor": DECOR[post.get("decor", "waves")],
+        "decor": DECOR[post.get("decor") or d_decor],
         "frame_html": frame_html(layout, post["photo"], post.get("alt", headline)),
-        "sticker_html": sticker_html,
+        "extra_html": extra_html(layout, post),
+        "sticker_html": f'<div class="sticker">{html.escape(sticker)}</div>' if sticker else "",
     }
     out = TEMPLATE
     for k, v in vals.items():
@@ -125,7 +151,7 @@ def render(paths):
         for path in paths:
             post = json.loads(path.read_text())
             tmp = ROOT / "out" / f".{path.stem}.html"
-            tmp.write_text(build_html(post))
+            tmp.write_text(build_html(post, path.stem))
             page.goto(tmp.resolve().as_uri(), wait_until="networkidle")
             page.evaluate("document.fonts.ready")
             dest = ROOT / "out" / f"{path.stem}.jpg"
