@@ -27,9 +27,11 @@ from playwright.sync_api import sync_playwright
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from layouts import LAYOUTS, ORDER  # noqa: E402
+from layouts_b import LAYOUTS_B, ORDER_B  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BASE = (ROOT / "templates" / "base.html").read_text()
+BASE_B = (ROOT / "templates" / "base_b.html").read_text()
 
 TERRA, MUSTARD, BLUSH, PEACH, MINT, CREAM, INK = (
     "#D9663F", "#E8A93A", "#F4BDB8", "#F7CBA6", "#A9D8C4", "#FBF3E6", "#3B2A20")
@@ -60,7 +62,16 @@ def local_fonts():
              ("Poppins", "poppins/files/poppins-latin-500-normal.woff2", 500),
              ("Poppins", "poppins/files/poppins-latin-700-normal.woff2", 700),
              ("Poppins", "poppins/files/poppins-latin-800-normal.woff2", 800)]
+    for w in (400, 500, 600, 700):
+        faces.append(("Cormorant Garamond", f"cormorant-garamond/files/cormorant-garamond-latin-{w}-normal.woff2", w))
+    for w in (300, 400, 500, 600):
+        faces.append(("Montserrat", f"montserrat/files/montserrat-latin-{w}-normal.woff2", w))
+    faces += [("Playfair Display", "playfair-display/files/playfair-display-latin-500-normal.woff2", 500),
+              ("Bebas Neue", "bebas-neue/files/bebas-neue-latin-400-normal.woff2", 400),
+              ("Josefin Sans", "josefin-sans/files/josefin-sans-latin-300-normal.woff2", 300)]
     css = "".join(f"@font-face{{font-family:'{n}';font-weight:{w};src:url('file://{base}/{f}')}}" for n, f, w in faces)
+    css += (f"@font-face{{font-family:'Playfair Display';font-style:italic;font-weight:500;src:url('file://{base}/playfair-display/files/playfair-display-latin-500-italic.woff2')}}"
+            f"@font-face{{font-family:'Cormorant Garamond';font-style:italic;font-weight:500;src:url('file://{base}/cormorant-garamond/files/cormorant-garamond-latin-500-italic.woff2')}}")
     return f"<style>{css}</style>"
 
 
@@ -95,7 +106,58 @@ def caption_html(post, date_str):
     return top + html.escape(rest)
 
 
+def design_set(post, date_str):
+    """Which layout set a post uses: the post's own "set", else sets.json (latest "from" date wins), else A."""
+    if post.get("set"):
+        return post["set"].upper()
+    cfg = ROOT / "sets.json"
+    chosen = "A"
+    if cfg.exists():
+        for row in sorted(json.loads(cfg.read_text()), key=lambda r: r["from"]):
+            if row["from"] <= date_str:
+                chosen = row["set"].upper()
+    return chosen
+
+
+POS = ["50% 50%", "25% 35%", "75% 65%", "35% 80%", "70% 25%"]
+
+
+def build_html_b(post, date_str=""):
+    n = day_index(date_str)
+    layout = post.get("layout") if post.get("layout") in LAYOUTS_B else ORDER_B[n % len(ORDER_B)]
+    photos = post.get("photos") or [post["photo"]]
+    title = post.get("category") or post["headline"]
+    tag = post.get("tag", TAG_CYCLE[n % len(TAG_CYCLE)])
+    alt = html.escape(post.get("product", title))
+
+    def ph(i, cls="", style="", pos=None):
+        src = photos[i % len(photos)]
+        if pos is None and i >= len(photos):
+            pos = POS[i % len(POS)]
+        st = f' style="object-position:{pos}"' if pos else ""
+        return f'<div class="ph {cls}" style="{style}"><img src="{html.escape(src)}" alt="{alt}"{st}></div>'
+
+    def foot(light=False, site_only=False):
+        pn = ""
+        if tag in ("B", "P") and not site_only:
+            bits = " · ".join(x for x in (post.get("product", ""), post.get("price", "")) if x)
+            pn = f'<span class="pn">{html.escape(bits)}</span>'
+        return f'<div class="foot{" light" if light else ""}">{pn}classicmodernfabrics.com</div>'
+
+    def fit(width, base, k):
+        return min(base, int(width / (max(len(title), 4) * k)))
+
+    p = {"ph": ph, "foot": foot, "fit": fit, "title": html.escape(title), "words": html.escape(title).split(),
+         "product": html.escape(post.get("product", "")), "price": html.escape(post.get("price", "")),
+         "headline": html.escape(post.get("headline", ""))}
+    css, body = LAYOUTS_B[layout](p)
+    out = BASE_B.replace("{{layout_css}}", css).replace("{{body}}", body).replace("{{local_fonts}}", local_fonts())
+    return out, "B:" + layout
+
+
 def build_html(post, date_str=""):
+    if design_set(post, date_str) == "B":
+        return build_html_b(post, date_str)
     layout, palette = pick(date_str, post)
     bg, a, b, c, ink, frame, soft = PALETTES[palette]
     head = post["headline"]
