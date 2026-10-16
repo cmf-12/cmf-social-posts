@@ -84,11 +84,11 @@ def circle_curved(p):
       .cap{bottom:34px;z-index:7}
       .cap span{display:inline-block;background:var(--ink);color:var(--frame);padding:10px 30px;border-radius:40px;line-height:1.35}"""
     arc = f"""<svg class="full" style="z-index:5" viewBox="0 0 1080 1350">
-      <path d="M0 0 H1080 V250 C840 130 240 130 0 250Z" fill="var(--ink)"/>
+      <path d="M0 0 H1080 V300 C840 170 240 170 0 300Z" fill="var(--ink)"/>
       <circle cx="540" cy="760" r="470" fill="none" stroke="var(--frame)" stroke-width="10"/>
       <circle cx="540" cy="760" r="495" fill="none" stroke="var(--a)" stroke-width="8" stroke-dasharray="4 22" stroke-linecap="round"/>
-      <defs><path id="arc" d="M150 250 A520 300 0 0 1 930 250"/></defs>
-      <text font-family="Shrikhand" font-size="{min(p['hs'],86)}" fill="var(--frame)" text-anchor="middle"><textPath href="#arc" startOffset="50%">{p['head']}</textPath></text></svg>"""
+      <defs><path id="arc" d="M150 215 A520 250 0 0 1 930 215"/></defs>
+      <text font-family="Shrikhand" font-size="{min(p['hs'],76)}" fill="var(--frame)" text-anchor="middle"><textPath href="#arc" startOffset="50%">{p['head']}</textPath></text></svg>"""
     body = f"""<div class="clip ph">{p['img']}</div>{arc}<div class="cap"><span>{p['cap']}</span></div>"""
     return css, body
 
