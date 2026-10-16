@@ -66,7 +66,7 @@ def outline_offset(p):
       .line{left:150px;top:170px;width:850px;height:960px;border:5px solid var(--a);z-index:2}
       .ph{left:90px;top:220px;width:850px;height:960px;z-index:3}
       .head{left:60px;right:60px;top:52px;font-size:var(--hs)}
-      .badge{left:20px;top:1010px;width:250px;height:250px;z-index:5}"""
+      .badge{left:820px;top:110px;width:230px;height:230px;z-index:5}"""
     badge = f"""<svg class="abs badge" viewBox="0 0 250 250"><circle cx="125" cy="125" r="118" fill="var(--b)"/>
       <defs><path id="cir" d="M125 125 m-88 0 a88 88 0 1 1 176 0 a88 88 0 1 1 -176 0"/></defs>
       <text font-family="Poppins" font-weight="800" font-size="25" letter-spacing="5" fill="var(--ink)">
@@ -88,7 +88,7 @@ def circle_curved(p):
       <circle cx="540" cy="760" r="470" fill="none" stroke="var(--frame)" stroke-width="10"/>
       <circle cx="540" cy="760" r="495" fill="none" stroke="var(--a)" stroke-width="8" stroke-dasharray="4 22" stroke-linecap="round"/>
       <defs><path id="arc" d="M150 215 A520 250 0 0 1 930 215"/></defs>
-      <text font-family="Shrikhand" font-size="{min(p['hs'],76)}" fill="var(--frame)" text-anchor="middle"><textPath href="#arc" startOffset="50%">{p['head']}</textPath></text></svg>"""
+      <text font-family="Shrikhand" font-size="{min(76, int(1150 / max(len(p['head']), 1)))}" fill="var(--frame)" text-anchor="middle"><textPath href="#arc" startOffset="50%">{p['head']}</textPath></text></svg>"""
     body = f"""<div class="clip ph">{p['img']}</div>{arc}<div class="cap"><span>{p['cap']}</span></div>"""
     return css, body
 
@@ -155,7 +155,7 @@ def polaroid_new(p):
       .bar{position:absolute;left:32px;right:32px;bottom:42px;text-align:center;font-family:Shrikhand,serif;font-size:var(--hs);color:#3B2A20}
       .cap{bottom:38px}"""
     body = f"""<div class="abs rep">{rows}</div>
-      <div class="abs card"><div class="clip">{p['img']}</div><div class="bar" style="--hs:{min(p['hs'],76)}px">{p['head']}</div></div>
+      <div class="abs card"><div class="clip">{p['img']}</div><div class="bar" style="--hs:{76 if len(p['head']) <= 16 else 58 if len(p['head']) <= 22 else 48}px">{p['head']}</div></div>
       <div class="cap">{p['cap']}</div>"""
     return css, body
 
