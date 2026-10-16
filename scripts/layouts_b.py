@@ -144,17 +144,17 @@ def b_full_light(p):
 
 def b_wave_split(p):
     s = p["fit"](600, 76, .5) if len(p["words"]) < 2 else min(76, int(600 / (max(len(w) for w in p["words"]) * .55)))
-    wave = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 960 560' preserveAspectRatio='none'%3E"
-            "%3Cpath d='M0 60 C200 0 330 110 480 60 S800 0 960 50 V560 H0Z'/%3E%3C/svg%3E")
+    wave = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 960 610' preserveAspectRatio='none'%3E"
+            "%3Cpath d='M0 110 C130 0 350 0 480 110 S830 220 960 110 V610 H0Z'/%3E%3C/svg%3E")
     css = f""".frame{{position:absolute;inset:24px;border:1.5px solid var(--line);z-index:1}}
 .t{{right:64px;top:54px;text-align:right;font-size:{s}px;font-weight:500;letter-spacing:3px;text-transform:uppercase;line-height:1.05}}
 .w2{{-webkit-mask:url("{wave}") center/100% 100% no-repeat;mask:url("{wave}") center/100% 100% no-repeat}}"""
     words = "<br>".join(p["words"])
     body = ('<div class="frame"></div>' + f'<div class="title serif t">{words}</div>'
-            + p["ph"](0, "", "left:60px;top:250px;width:960px;height:470px")
-            + p["ph"](1, "w2", "left:60px;top:660px;width:960px;height:590px")
-            + '<svg class="full" viewBox="0 0 1080 1350"><path d="M60 718 C260 658 390 768 540 718 S860 658 1020 708" fill="none" stroke="#B8975F" stroke-width="4"/>'
-              '<path d="M60 702 C260 642 390 752 540 702 S860 642 1020 692" fill="none" stroke="#FBF8F2" stroke-width="10"/></svg>'
+            + p["ph"](0, "", "left:60px;top:250px;width:960px;height:620px")
+            + p["ph"](1, "w2", "left:60px;top:640px;width:960px;height:610px")
+            + '<svg class="full" viewBox="0 0 1080 1350"><path d="M60 750 C190 640 410 640 540 750 S890 860 1020 750" fill="none" stroke="#FBF8F2" stroke-width="16"/>'
+              '<path d="M60 742 C190 632 410 632 540 742 S890 852 1020 742" fill="none" stroke="#B8975F" stroke-width="4"/></svg>'
             + p["foot"]())
     return css, body
 
