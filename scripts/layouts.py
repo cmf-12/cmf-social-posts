@@ -78,16 +78,18 @@ def outline_offset(p):
 
 
 def circle_curved(p):
-    """5. Big circle photo in a double ring with the headline curved over the top (sample: 'meet the owner')."""
+    """5. Photo fills the whole post; cream arch band at top with the headline curved over a big ring outline (sample: 'meet the owner')."""
     css = """
-      .ring1{left:90px;top:260px;width:900px;height:900px;border-radius:50%;background:var(--soft);z-index:2}
-      .ring2{left:130px;top:300px;width:820px;height:820px;border-radius:50%;background:var(--frame);z-index:3}
-      .ph{left:155px;top:325px;width:770px;height:770px;border-radius:50%;z-index:4}
-      .cap{bottom:44px}"""
-    arc = f"""<svg class="full" style="z-index:6" viewBox="0 0 1080 1350"><defs><path id="arc" d="M110 700 A430 430 0 0 1 970 700"/></defs>
-      <text font-family="Shrikhand" font-size="{min(p['hs'],96)}" fill="var(--ink)" text-anchor="middle"><textPath href="#arc" startOffset="50%" dy="-40">{p['head']}</textPath></text></svg>"""
-    body = f"""<div class="abs ring1"></div><div class="abs ring2"></div><div class="clip ph">{p['img']}</div>{arc}
-      <div class="cap">{p['cap']}</div>"""
+      .ph{left:0;top:0;width:1080px;height:1350px;z-index:1}
+      .cap{bottom:34px;z-index:7}
+      .cap span{display:inline-block;background:var(--frame);padding:10px 30px;border-radius:40px;line-height:1.35}"""
+    arc = f"""<svg class="full" style="z-index:5" viewBox="0 0 1080 1350">
+      <path d="M0 0 H1080 V230 C840 120 240 120 0 230Z" fill="var(--frame)"/>
+      <circle cx="540" cy="760" r="470" fill="none" stroke="var(--frame)" stroke-width="10"/>
+      <circle cx="540" cy="760" r="495" fill="none" stroke="var(--a)" stroke-width="8" stroke-dasharray="4 22" stroke-linecap="round"/>
+      <defs><path id="arc" d="M150 250 A520 300 0 0 1 930 250"/></defs>
+      <text font-family="Shrikhand" font-size="{min(p['hs'],86)}" fill="var(--ink)" text-anchor="middle"><textPath href="#arc" startOffset="50%">{p['head']}</textPath></text></svg>"""
+    body = f"""<div class="clip ph">{p['img']}</div>{arc}<div class="cap"><span>{p['cap']}</span></div>"""
     return css, body
 
 
@@ -121,20 +123,24 @@ def script_repeat(p):
 
 
 def squiggle_bg(p):
-    """8. Hand-drawn squiggle pattern background + circle photo in a colored ring (sample: mustard squiggles)."""
-    import random
-    rnd = random.Random(7)
-    paths = []
-    for _ in range(26):
-        x, y = rnd.randint(-60, 1080), rnd.randint(-60, 1350)
-        paths.append(f'<path d="M{x} {y} c40 -60 90 40 130 -10 s70 -70 120 0 s60 60 110 -20" stroke="var(--soft)" stroke-width="9" fill="none" stroke-linecap="round"/>')
+    """8. Photo fills the whole post with hand-drawn squiggle doodles around the edges + headline on a color pill (sample: mustard squiggles)."""
     css = """
-      .ring{left:85px;top:215px;width:910px;height:910px;border-radius:50%;background:var(--a);z-index:2}
-      .ph{left:115px;top:245px;width:850px;height:850px;border-radius:50%;z-index:3;border:10px solid var(--frame)}
-      .head{left:60px;right:60px;top:48px;font-size:var(--hs)}"""
-    body = f"""<svg class="full" viewBox="0 0 1080 1350">{''.join(paths)}</svg>
-      <div class="head" style="--hs:{p['hs']}px">{p['head']}</div>
-      <div class="abs ring"></div><div class="clip ph">{p['img']}</div><div class="cap">{p['cap']}</div>"""
+      .ph{left:0;top:0;width:1080px;height:1350px;z-index:1}
+      .head{left:0;right:0;top:46px;z-index:6}
+      .head span{display:inline-block;background:var(--a);color:var(--frame);padding:12px 46px;border-radius:70px;font-size:var(--hs);transform:rotate(-2deg)}
+      .cap{bottom:34px;z-index:6}
+      .cap span{display:inline-block;background:var(--frame);padding:10px 30px;border-radius:40px;line-height:1.35}"""
+    doodles = """<svg class="full" style="z-index:4" viewBox="0 0 1080 1350" fill="none" stroke-linecap="round">
+      <path d="M30 260 c40 -60 90 40 130 -10 s70 -70 120 0" stroke="var(--frame)" stroke-width="12"/>
+      <path d="M840 300 c30 -50 80 30 110 -10 s60 -60 100 0" stroke="var(--b)" stroke-width="12"/>
+      <path d="M40 1120 c50 -40 60 50 110 20 s40 -70 100 -30" stroke="var(--b)" stroke-width="12"/>
+      <path d="M850 1150 c40 -60 90 40 130 -10 s50 -60 90 -10" stroke="var(--frame)" stroke-width="12"/>
+      <path d="M990 560 c-40 40 30 80 -10 120 s-50 60 0 100" stroke="var(--frame)" stroke-width="10"/>
+      <path d="M70 620 c40 40 -30 80 10 120 s50 60 0 100" stroke="var(--a)" stroke-width="10"/>
+      <path d="M1000 420 l18 -40 l18 40 l40 18 l-40 18 l-18 40 l-18 -40 l-40 -18z" fill="var(--b)" stroke="none"/>
+      <path d="M60 470 l14 -30 l14 30 l30 14 l-30 14 l-14 30 l-14 -30 l-30 -14z" fill="var(--frame)" stroke="none"/></svg>"""
+    body = f"""<div class="clip ph">{p['img']}</div>{doodles}
+      <div class="head" style="--hs:{min(p['hs'],80)}px"><span>{p['head']}</span></div><div class="cap"><span>{p['cap']}</span></div>"""
     return css, body
 
 
