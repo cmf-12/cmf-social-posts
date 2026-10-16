@@ -37,7 +37,7 @@ def vertical_strip(p):
       <path d="M130 1240 C300 1150 260 1300 470 1230 S720 1120 760 1250 S980 1210 1060 1120" stroke="var(--frame)" stroke-width="7" fill="none" stroke-linecap="round"/>
       <path d="M1010 170 c30 -40 70 10 40 40 s-60 40 -20 70" stroke="var(--b)" stroke-width="9" fill="none" stroke-linecap="round"/></svg>"""
     body = f"""<div class="abs strip"><div>{strip}</div></div>
-      <div class="head" style="--hs:{p['hs']}px">{p['head']}</div>
+      <div class="head" style="--hs:{min(p['hs'],64)}px">{p['head']}</div>
       <div class="clip ph">{p['img']}</div>{squiggle}<div class="cap">{p['cap']}</div>"""
     return css, body
 
@@ -52,7 +52,7 @@ def psy_waves(p):
       .mat .clip{position:relative;width:100%;height:100%}
       .head{left:60px;right:60px;top:40px;z-index:6}
       .head span{display:inline-block;background:var(--frame);padding:12px 44px;border-radius:80px;font-size:var(--hs)}
-      .cap span{background:var(--frame);padding:8px 22px;border-radius:30px}"""
+      .cap span{display:inline-block;background:var(--frame);padding:8px 26px;border-radius:30px;line-height:1.35}"""
     body = f"""<svg class="full" viewBox="0 0 1080 1350">{waves}</svg>
       <div class="head" style="--hs:{min(p['hs'],80)}px"><span>{p['head']}</span></div>
       <div class="abs mat"><div class="clip">{p['img']}</div></div>

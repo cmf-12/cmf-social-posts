@@ -3,8 +3,10 @@
 posts/YYYY-MM-DD.json:
 {
   "photo": "https://cdn.shopify.com/...jpg",
-  "headline": "Love at first touch",
-  "caption": "Burgundy floral damask velvet · $26.99/yd · classicmodernfabrics.com",
+  "headline": "Love at first touch",          # catchy phrase, different every day
+  "product": "Burgundy floral damask velvet",  # product name
+  "price": "$26.99/yd",
+  "caption": optional full override of the bottom line,
   "word": "VELVET",         # big repeated word (layouts 1, 2)   default: FABRIC
   "badge": "NEW",           # badge / outlined word (layouts 4, 9) default: NEW
   "layout": optional override, else rotates by date (Feb 1 2027 = layout 1)
@@ -43,6 +45,9 @@ PALETTES = {
 }
 PALETTE_ORDER = ["blush", "mint", "mustard", "peach", "cream", "sky", "mint"]  # 7-day cycle
 EPOCH = datetime.date(2027, 2, 1)
+BRAND = "Classic Modern Fabrics"
+# Brand reminder: 3 of every 5 posts get a bold tag line ("B" = brand name, "P" = product name).
+TAG_CYCLE = ["B", None, "P", None, "B", "P", None, "B", None, "P"]
 
 
 def local_fonts():
@@ -59,14 +64,35 @@ def local_fonts():
     return f"<style>{css}</style>"
 
 
-def pick(date_str, post):
+def day_index(date_str):
     try:
-        n = (datetime.date.fromisoformat(date_str) - EPOCH).days
+        return (datetime.date.fromisoformat(date_str) - EPOCH).days
     except ValueError:
-        n = 0
+        return 0
+
+
+def pick(date_str, post):
+    n = day_index(date_str)
     layout = post.get("layout") or ORDER[n % len(ORDER)]
     palette = post.get("palette") or PALETTE_ORDER[n % len(PALETTE_ORDER)]
     return layout, palette
+
+
+def caption_html(post, date_str):
+    """Bottom line. On tag days it starts with a bold BRAND or PRODUCT line."""
+    if post.get("caption"):
+        return html.escape(post["caption"])
+    tag = post.get("tag", TAG_CYCLE[day_index(date_str) % len(TAG_CYCLE)])
+    product, price, site = post.get("product", ""), post.get("price", ""), "classicmodernfabrics.com"
+    if tag == "B":
+        top = f'<b class="tg">{html.escape(BRAND)}</b><br>'
+        rest = " · ".join(x for x in (product, price, site) if x)
+    elif tag == "P":
+        top = f'<b class="tg">{html.escape(product)}</b><br>'
+        rest = " · ".join(x for x in (price, site) if x)
+    else:
+        top, rest = "", " · ".join(x for x in (product, price, site) if x)
+    return top + html.escape(rest)
 
 
 def build_html(post, date_str=""):
@@ -76,7 +102,7 @@ def build_html(post, date_str=""):
     hs = 92 if len(head) <= 18 else 76 if len(head) <= 26 else 62
     p = {
         "img": f'<img class="photo" src="{html.escape(post["photo"])}" alt="{html.escape(post.get("alt", head))}">',
-        "head": html.escape(head), "cap": html.escape(post["caption"]),
+        "head": html.escape(head), "cap": caption_html(post, date_str),
         "word": html.escape(post.get("word", "FABRIC")), "badge": html.escape(post.get("badge", "NEW")),
         "hs": post.get("headline_size", hs),
     }
