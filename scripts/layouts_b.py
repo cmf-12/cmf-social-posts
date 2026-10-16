@@ -217,34 +217,35 @@ def b_frame_lines(p):
 
 
 def b_arch_band(p):
+    """Title band, then two photos side by side, exactly 50% each (e.g. two colors of one product)."""
     s = p["fit"](960, 78, .62)
     css = f""".t{{left:40px;right:40px;top:50px;text-align:center;font-size:{s}px;font-weight:500;letter-spacing:4px;text-transform:uppercase}}
 .rule{{position:absolute;left:300px;right:300px;top:{60 + s + 14}px;height:2px;background:var(--line)}}
-.arch{{border-radius:470px 470px 0 0}}
-.ao{{position:absolute;left:44px;top:484px;width:992px;height:782px;border:2px solid var(--gold);border-bottom:0;border-radius:496px 496px 0 0;z-index:5}}"""
+.ao{{position:absolute;left:44px;top:174px;width:992px;height:1092px;border:2px solid var(--gold);border-bottom:0;border-radius:496px 496px 0 0;z-index:5}}
+.mid{{position:absolute;left:537px;top:190px;width:6px;height:1060px;background:var(--bg);z-index:4}}"""
     body = (f'<div class="title serif t">{p["title"]}</div><div class="rule"></div>'
-            + p["ph"](0, "", "left:60px;top:190px;width:960px;height:280px")
-            + p["ph"](1, "arch", "left:60px;top:500px;width:960px;height:750px")
-            + '<div class="ao"></div>' + p["foot"]())
+            + p["ph"](0, "", "left:60px;top:190px;width:480px;height:1060px;border-radius:480px 0 0 0")
+            + p["ph"](1, "", "left:540px;top:190px;width:480px;height:1060px;border-radius:0 480px 0 0")
+            + '<div class="mid"></div><div class="ao"></div>' + p["foot"]())
     return css, body
 
 
-def b_box_title(p):
+def b_full_bold(p):
+    """Whole post is the photo, with a large italic title stacked bottom-left."""
     longest = max(len(w) for w in p["words"])
-    s = min(58, int(520 / (longest * .7)), int(520 / (len(p["title"]) * .62)) if len(p["words"]) == 1 else 58)
-    two = p["words"] if len(p["words"]) <= 2 else [" ".join(p["words"][:len(p["words"]) // 2]), " ".join(p["words"][len(p["words"]) // 2:])]
-    css = f""".box{{left:48px;top:48px;width:600px;height:230px;border:2px solid var(--line);background:var(--paper);padding:0 40px;display:flex;flex-direction:column;justify-content:center;z-index:6}}
-.box div{{font-family:'Montserrat',sans-serif;font-weight:400;font-size:{s}px;letter-spacing:3px;text-transform:uppercase;line-height:1.12}}"""
-    words = "".join(f"<div>{w}</div>" for w in two)
-    body = (f'<div class="abs box">{words}</div>'
-            + p["ph"](2, "", "left:664px;top:48px;width:368px;height:230px")
-            + p["ph"](0, "", "left:48px;top:294px;width:380px;height:956px")
-            + p["ph"](1, "", "left:444px;top:294px;width:588px;height:956px")
-            + p["foot"]())
+    s = min(190, int(900 / (longest * .5)))
+    css = f""".bgp{{inset:0}}
+.shade{{position:absolute;inset:0;z-index:4;background:linear-gradient(0deg,rgba(0,0,0,.62) 0,rgba(0,0,0,.25) 38%,rgba(0,0,0,0) 60%)}}
+.t{{left:64px;right:64px;bottom:150px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:500;font-size:{s}px;line-height:.98;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.4)}}
+.rule{{position:absolute;left:68px;width:220px;bottom:122px;height:3px;background:#E2C88E;z-index:6}}
+.foot{{text-align:left;left:68px}}"""
+    words = "<br>".join(p["words"])
+    body = (p["ph"](0, "bgp") + '<div class="shade"></div>' + f'<div class="title t">{words}</div><div class="rule"></div>'
+            + p["foot"](light=True))
     return css, body
 
 
 LAYOUTS_B = {f.__name__: f for f in (
     b_diagonal, b_grid_pill, b_full_serif, b_thumbs, b_fan, b_deco_panels, b_full_corner, b_full_light,
-    b_wave_split, b_swatch_overlay, b_two_up, b_grid4, b_frame_lines, b_arch_band, b_box_title)}
+    b_wave_split, b_swatch_overlay, b_two_up, b_grid4, b_frame_lines, b_arch_band, b_full_bold)}
 ORDER_B = list(LAYOUTS_B)
