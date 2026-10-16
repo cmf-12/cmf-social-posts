@@ -261,7 +261,7 @@ def full_brand(p):
     css = """
       .ph{left:0;top:0;width:1080px;height:1350px;z-index:1}
       .rib{left:-20px;right:-20px;top:70px;z-index:5;background:var(--frame);padding:22px 0 18px;text-align:center;transform:rotate(-2deg);box-shadow:0 10px 0 var(--a)}
-      .rib b{font-family:Bungee,sans-serif;font-weight:400;font-size:74px;letter-spacing:3px;color:var(--ink)}
+      .rib b{font-family:Bungee,sans-serif;font-weight:400;font-size:62px;letter-spacing:2px;color:var(--ink)}
       .pill{left:0;right:0;bottom:205px;z-index:6;text-align:center}
       .pill span{display:inline-block;background:var(--a);color:var(--frame);font-family:Shrikhand,serif;font-size:var(--hs);padding:12px 44px;border-radius:70px;transform:rotate(-2deg)}
       .cap{bottom:34px;z-index:6}
